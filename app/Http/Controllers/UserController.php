@@ -6,6 +6,7 @@ use Illuminate\Http\Response;
 use App\Models\User;
 use App\Traits\ApiResponser;
 use DB;
+use App\Models\UserJob;
 
 Class UserController extends Controller {
     use ApiResponser;
@@ -32,8 +33,10 @@ Class UserController extends Controller {
         $rules = [
             'username'=>'required',
             'password'=>'required',
+            'jobid' => 'required|numeric|min:1|not_in:0',
         ];
         $this->validate($request, $rules);
+        $userjob =UserJob::findOrFail($request->jobid);
         $input = User::create($request->all());
         return $this->successResponse($input, RESPONSE::HTTP_CREATED);
     }
@@ -52,9 +55,11 @@ Class UserController extends Controller {
         $rules = [
             'username' => 'max:10',
             'password' => 'max:10',
+            'jobid' => 'required|numeric|min:1|not_in:0',
             ];
     
         $this->validate($request, $rules);
+        $userjob = UserJob::findOrFail($request->jobid);
         $user = User::findOrFail($id);
             
         $user->fill($request->all());
